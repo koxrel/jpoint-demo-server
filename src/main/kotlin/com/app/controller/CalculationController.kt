@@ -8,6 +8,7 @@ import io.micronaut.http.annotation.Post
 
 @Controller("/rest/calculation")
 class CalculationController(private val calculationService: ICalculationService) {
+
     @Post("/company/{insuranceCompany}")
     suspend fun getCalculation(insuranceCompany: InsuranceCompany): CalculationResponse {
         return calculationService.getCalculation(insuranceCompany)
