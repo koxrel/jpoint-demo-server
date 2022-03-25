@@ -5,6 +5,7 @@ import com.app.model.InsuranceCompany
 import jakarta.inject.Singleton
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.SendChannel
+import kotlinx.coroutines.channels.trySendBlocking
 import java.math.BigDecimal
 import kotlin.random.Random
 
@@ -16,6 +17,7 @@ interface ICalculationService {
 
 interface IWsCalculationService {
     suspend fun getAllCalculations(channel: SendChannel<CalculationResponse>)
+    suspend fun getAllCalculationsWithErrorMessages(channel: SendChannel<CalculationResponse>)
 }
 
 @Singleton
@@ -35,6 +37,10 @@ class CalculationService : ICalculationService, IWsCalculationService {
 
         delay(Random.nextLong(1_000, 8_000))
 
+        if (Random.nextInt(0, 10) > 5) {
+            throw RuntimeException("Failed calculation for $insuranceCompany")
+        }
+
         return CalculationResponse(price, insuranceCompany)
     }
 
@@ -51,6 +57,19 @@ class CalculationService : ICalculationService, IWsCalculationService {
     override suspend fun getAllCalculations(channel: SendChannel<CalculationResponse>) = coroutineScope {
         InsuranceCompany.values().forEach { insuranceCompany ->
             launch {
+                val result = getCalculation(insuranceCompany)
+                channel.send(result)
+            }
+        }
+    }
+
+    override suspend fun getAllCalculationsWithErrorMessages(channel: SendChannel<CalculationResponse>) = supervisorScope {
+        InsuranceCompany.values().forEach { insuranceCompany ->
+            val context = CoroutineExceptionHandler { _, exception ->
+                channel.trySendBlocking(CalculationResponse(BigDecimal.ZERO, insuranceCompany))
+            }
+
+            launch(context) {
                 val result = getCalculation(insuranceCompany)
                 channel.send(result)
             }

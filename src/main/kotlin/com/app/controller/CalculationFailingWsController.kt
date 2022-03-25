@@ -6,17 +6,20 @@ import io.micronaut.runtime.http.scope.RequestScope
 import io.micronaut.websocket.WebSocketSession
 import io.micronaut.websocket.annotation.OnMessage
 import io.micronaut.websocket.annotation.ServerWebSocket
+import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.ReceiveChannel
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
 
 @RequestScope
-@ServerWebSocket("/ws/calculation")
-class CalculationWsController(private val calculationService: IWsCalculationService) {
+@ServerWebSocket("/ws/failing/calculation")
+class CalculationFailingWsController(private val calculationService: IWsCalculationService) {
+
+    private var calculationJob: Job? = null
 
     @OnMessage
     suspend fun onMessage(message: String, session: WebSocketSession) {
+        calculationJob?.cancelAndJoin()
+
         val channel = Channel<CalculationResponse>(capacity = Channel.BUFFERED)
 
         coroutineScope {
@@ -24,9 +27,14 @@ class CalculationWsController(private val calculationService: IWsCalculationServ
                 sendMessage(session, channel)
             }
 
-            calculationService.getAllCalculations(channel)
-
-            channel.close()
+            calculationJob = launch {
+                try {
+                    calculationService.getAllCalculationsWithErrorMessages(channel)
+                }
+                finally {
+                    channel.close()
+                }
+            }
         }
     }
 
