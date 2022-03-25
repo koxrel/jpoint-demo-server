@@ -3,10 +3,8 @@ package com.app.service
 import com.app.dto.CalculationResponse
 import com.app.model.InsuranceCompany
 import jakarta.inject.Singleton
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.SendChannel
 import java.math.BigDecimal
 import kotlin.random.Random
 
@@ -16,8 +14,12 @@ interface ICalculationService {
     suspend fun getAllCalculationsInParallel(): List<CalculationResponse>
 }
 
+interface IWsCalculationService {
+    suspend fun getAllCalculations(channel: SendChannel<CalculationResponse>)
+}
+
 @Singleton
-class CalculationService : ICalculationService {
+class CalculationService : ICalculationService, IWsCalculationService {
     override suspend fun getCalculation(insuranceCompany: InsuranceCompany): CalculationResponse {
         val price = when (insuranceCompany) {
             InsuranceCompany.FIRST -> {
@@ -44,5 +46,14 @@ class CalculationService : ICalculationService {
         val jobs = InsuranceCompany.values().map { async { getCalculation(it) } }.toTypedArray()
 
         awaitAll(*jobs)
+    }
+
+    override suspend fun getAllCalculations(channel: SendChannel<CalculationResponse>) = coroutineScope {
+        InsuranceCompany.values().forEach { insuranceCompany ->
+            launch {
+                val result = getCalculation(insuranceCompany)
+                channel.send(result)
+            }
+        }
     }
 }
