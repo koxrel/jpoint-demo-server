@@ -35,7 +35,7 @@ class CalculationService : ICalculationService, IWsCalculationService {
             }
         }.let(::BigDecimal)
 
-        delay(Random.nextLong(1_000, 8_000))
+        delay(Random.nextLong(30_000, 180_000))
 
         if (Random.nextInt(0, 10) > 5) {
             throw RuntimeException("Failed calculation for $insuranceCompany")
