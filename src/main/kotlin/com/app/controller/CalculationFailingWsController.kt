@@ -4,6 +4,7 @@ import com.app.dto.CalculationResponse
 import com.app.service.IWsCalculationService
 import io.micronaut.runtime.http.scope.RequestScope
 import io.micronaut.websocket.WebSocketSession
+import io.micronaut.websocket.annotation.OnClose
 import io.micronaut.websocket.annotation.OnMessage
 import io.micronaut.websocket.annotation.ServerWebSocket
 import kotlinx.coroutines.*
@@ -36,6 +37,11 @@ class CalculationFailingWsController(private val calculationService: IWsCalculat
                 }
             }
         }
+    }
+
+    @OnClose
+    fun onClose() {
+        calculationJob?.cancel()
     }
 
     suspend fun sendMessage(session: WebSocketSession, channel: ReceiveChannel<CalculationResponse>) {
