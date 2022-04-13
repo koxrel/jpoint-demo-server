@@ -1,7 +1,7 @@
 package com.app.controller
 
 import com.app.dto.CalculationResponse
-import com.app.service.IWsCalculationService
+import com.app.service.WsCalculationService
 import io.micronaut.runtime.http.scope.RequestScope
 import io.micronaut.websocket.WebSocketSession
 import io.micronaut.websocket.annotation.OnMessage
@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
 
 @RequestScope
 @ServerWebSocket("/ws/calculation")
-class CalculationWsController(private val calculationService: IWsCalculationService) {
+class CalculationWsController(private val calculationService: WsCalculationService) {
 
     @OnMessage
     suspend fun onMessage(message: String, session: WebSocketSession) {
