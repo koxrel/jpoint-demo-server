@@ -1,13 +1,24 @@
-## Micronaut 3.3.1 Documentation
+## Ворк-шоп "Создание онлайн-маркетплейса на платформе Micronaut, Kotlin, Java 11+"
 
-- [User Guide](https://docs.micronaut.io/3.3.1/guide/index.html)
-- [API Reference](https://docs.micronaut.io/3.3.1/api/index.html)
-- [Configuration Reference](https://docs.micronaut.io/3.3.1/guide/configurationreference.html)
-- [Micronaut Guides](https://guides.micronaut.io/index.html)
+Приложение является сопутствующим материалом, содержащим полный код для каждого из этапов ворк-шопа.
 
----
+### Требования для запуска
+1. Наличие доступа в интернет (для загрузки требуемых пакетов)
+2. JDK 11+ (для сборки и запуска)
 
-- [Shadow Gradle Plugin](https://plugins.gradle.org/plugin/com.github.johnrengelman.shadow)## Feature http-client documentation
+### Запуск
+```shell
+./gradlew run
+```
 
-- [Micronaut HTTP Client documentation](https://docs.micronaut.io/latest/guide/index.html#httpClient)
+Gradle, при необходимости, соберет проект и запустит сервер.
 
+### Пример расчета для одной страховой (как пример внешнего сервиса расчета)
+```shell
+curl --location --request GET 'http://localhost:8080/rest/insurance/first'
+```
+
+### Пример обращения к сервису агрегации
+```shell
+curl --location --request POST 'http://localhost:8080/rest/calculation/company/all-parallel'
+```

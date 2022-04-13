@@ -2,12 +2,12 @@ package com.app.controller
 
 import com.app.dto.CalculationResponse
 import com.app.model.InsuranceCompany
-import com.app.service.ICalculationService
+import com.app.service.CalculationService
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Post
 
 @Controller("/rest/calculation")
-class CalculationController(private val calculationService: ICalculationService) {
+class CalculationController(private val calculationService: CalculationService) {
     @Post("/company/{insuranceCompany}")
     suspend fun getCalculation(insuranceCompany: InsuranceCompany): CalculationResponse {
         return calculationService.getCalculation(insuranceCompany)

@@ -5,3 +5,11 @@ netty:
   default:
     allocator:
       max-order: 3
+
+delays:
+  first: 4_000
+  second: 6_000
+  third: 8_000
+
+insurance-companies:
+  host: http://localhost:8080/rest/insurance

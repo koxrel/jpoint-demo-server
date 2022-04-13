@@ -2,38 +2,25 @@ package com.app.service
 
 import com.app.dto.CalculationResponse
 import com.app.model.InsuranceCompany
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import jakarta.inject.Singleton
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.delay
-import java.math.BigDecimal
-import kotlin.random.Random
 
-interface ICalculationService {
+interface CalculationService {
     suspend fun getCalculation(insuranceCompany: InsuranceCompany): CalculationResponse
     suspend fun getAllCalculations(): List<CalculationResponse>
     suspend fun getAllCalculationsInParallel(): List<CalculationResponse>
 }
 
 @Singleton
-class CalculationService : ICalculationService {
+class CalculationServiceImpl(private val networkService: InsuranceNetworkService, private val objectMapper: ObjectMapper) : CalculationService {
     override suspend fun getCalculation(insuranceCompany: InsuranceCompany): CalculationResponse {
-        val price = when (insuranceCompany) {
-            InsuranceCompany.FIRST -> {
-                Random.nextInt(3_000, 8_000)
-            }
-            InsuranceCompany.SECOND -> {
-                Random.nextInt(3_500, 7_000)
-            }
-            InsuranceCompany.THIRD -> {
-                Random.nextInt(4_000, 9_000)
-            }
-        }.let(::BigDecimal)
+        val response = networkService.getCalculation(insuranceCompany)
 
-        delay(Random.nextLong(1_000, 8_000))
-
-        return CalculationResponse(price, insuranceCompany)
+        return objectMapper.readValue(response)
     }
 
     override suspend fun getAllCalculations(): List<CalculationResponse> {
