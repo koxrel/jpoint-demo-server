@@ -26,7 +26,7 @@ class InsuranceController(private val insuranceDelays: InsuranceDelays) {
     @Get("/third")
     suspend fun getThirdInsuranceCompanyCalculation(): CalculationResponse {
         delay(insuranceDelays.third)
-        return CalculationResponse(generatePrice(), InsuranceCompany.THIRD)
+        throw RuntimeException("Failed calculation")
     }
 
     private fun generatePrice() = Random.nextInt(3_000, 9_000).toBigDecimal()

@@ -8,6 +8,7 @@ import jakarta.inject.Singleton
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.channels.trySendBlocking
+import java.math.BigDecimal
 
 interface CalculationService {
     suspend fun getCalculation(insuranceCompany: InsuranceCompany): CalculationResponse
