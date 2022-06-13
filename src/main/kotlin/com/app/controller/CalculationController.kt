@@ -10,16 +10,16 @@ import io.micronaut.http.annotation.Post
 class CalculationController(private val calculationService: CalculationService) {
     @Post("/company/{insuranceCompany}")
     suspend fun getCalculation(insuranceCompany: InsuranceCompany): CalculationResponse {
-        return calculationService.getCalculation(insuranceCompany)
+        return  calculationService.getCalculation(insuranceCompany)
     }
 
     @Post("/company/all")
     suspend fun getAllCalculations(): List<CalculationResponse> {
-        return calculationService.getAllCalculations()
+        return  calculationService.getAllCalculations()
     }
 
     @Post("/company/all-parallel")
     suspend fun getAllCalculationsInParallel(): List<CalculationResponse> {
-        return calculationService.getAllCalculationsInParallel()
+        return  calculationService.getAllCalculationsInParallel()
     }
 }

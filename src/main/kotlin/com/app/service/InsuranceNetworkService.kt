@@ -9,15 +9,11 @@ import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 
-interface InsuranceNetworkService {
-    suspend fun getCalculation(insuranceCompany: InsuranceCompany): String
-}
-
 @Singleton
-class InsuranceNetworkServiceImpl(@Value("\${insurance-companies.host}") private val host: String) : InsuranceNetworkService {
+class InsuranceNetworkService(@Value("\${insurance-companies.host}") private val host: String) {
     private val httpClient = HttpClient.newHttpClient()
 
-    override suspend fun getCalculation(insuranceCompany: InsuranceCompany): String {
+    suspend fun getCalculation(insuranceCompany: InsuranceCompany): String {
         val request = HttpRequest.newBuilder(URI("$host/${insuranceCompany.name.lowercase()}")).GET().build()
 
         return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString()).await().body()
