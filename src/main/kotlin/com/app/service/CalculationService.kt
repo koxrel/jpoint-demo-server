@@ -43,7 +43,7 @@ class CalculationService(
         }
     }
 
-    suspend fun getAllCalculationsWithErrorPlaceholders(channel: SendChannel<CalculationResponse>) = coroutineScope {
+    suspend fun getAllCalculationsWithErrorPlaceholders(channel: SendChannel<CalculationResponse>) = supervisorScope {
         InsuranceCompany.values().forEach { insuranceCompany ->
             val context = CoroutineExceptionHandler { _, exception ->
                 log.error("Could not process calculation for $insuranceCompany", exception)
